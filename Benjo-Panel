@@ -1,0 +1,109 @@
+local _G_WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+local _G_Players = game:GetService("Players")
+local _G_LocalPlayer = _G_Players.LocalPlayer
+local _G_Discord = "https://discord.gg/nd64GVVnvp"
+
+local _Window = _G_WindUI:CreateWindow({
+    Folder = "benjo_final_instant",
+    Title = "THE BENJO PANEL ◆ PREMIUM",
+    NewElements = true,
+    OpenButton = {
+        Enabled = true,
+        Color = ColorSequence.new(Color3.fromHex("#FFD700"), Color3.fromHex("#FF4B4B")),
+        Title = "BENJO MENU",
+        Draggable = true,
+    },
+    Icon = "solar:crown-bold",
+    AccentColor = Color3.fromHex("#FFD700"),
+})
+
+-- // [ DASHBOARD ]
+local _T1 = _Window:Tab({ Title = "Dashboard", Icon = "solar:home-bold" })
+_T1:Button({ Title = "User: " .. _G_LocalPlayer.Name, Callback = function() end })
+_T1:Button({ Title = "Rank: [ AUTHORIZED DEVELOPER ]", Callback = function() end })
+
+-- // [ MAIN GAMES ]
+local _T2 = _Window:Tab({ Title = "Main Games", Icon = "solar:star-bold" })
+
+_T2:Button({
+    Title = "ADOPT ME PREMIUM (OP)",
+    Description = "Exponential OP Edition.",
+    Icon = "solar:play-circle-bold",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/adm-op"))() end
+})
+
+_T2:Button({
+    Title = "Murder Mystery 2 (OP)",
+    Description = "Silent Aim, ESP, and Exponential OP.",
+    Icon = "solar:play-circle-bold",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/mm2-op"))() end
+})
+
+_T2:Button({
+    Title = "SAB",
+    Description = "Kawatan Hub - Premium Features.",
+    Icon = "solar:play-circle-bold",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/PROGRAMSS-CPU/EXPONENTIAL/refs/heads/main/kawatan-hub"))() end
+})
+
+-- // [ OTHER GAMES ]
+local _T3 = _Window:Tab({ Title = "Other Games", Icon = "solar:gamepad-bold" })
+
+_T3:Button({
+    Title = "Blox Fruits",
+    Description = "Premium Leveling & Farm.",
+    Callback = function() loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b1f30331e1af9ab6e96fc80cd00b20a9.lua"))() end
+})
+
+_T3:Button({
+    Title = "Arsenal",
+    Description = "Aimbot, ESP, and Gun Mods.",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/0x0d3f/Quartyz/main/Gold.lua"))() end
+})
+
+_T3:Button({
+    Title = "Rivals",
+    Description = "Silent Aim & ESP.",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/blexn9/Script/refs/heads/main/Main"))() end
+})
+
+-- // [ SETTINGS ]
+local _T4 = _Window:Tab({ Title = "Settings", Icon = "solar:settings-bold" })
+
+_T4:Slider({
+    Title = "WalkSpeed",
+    Value = { Min = 16, Max = 250, Default = 16 },
+    Callback = function(v) pcall(function() _G_LocalPlayer.Character.Humanoid.WalkSpeed = v end) end
+})
+
+_T4:Button({
+    Title = "Server Hop",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/K00LKids/ServerHop/main/Hop.lua"))() end
+})
+
+-- // [ CREDITS ]
+local _T5 = _Window:Tab({ Title = "Credits", Icon = "solar:info-circle-bold" })
+_T5:Button({ 
+    Title = "Owner: BENJO", 
+    Description = "Click to copy new Discord link.",
+    Callback = function() 
+        setclipboard(_G_Discord) 
+        _G_WindUI:Notify({Title = "Copied", Content = "New Discord link copied!", Duration = 3})
+    end 
+})
+_T5:Button({ 
+    Title = "Join Discord", 
+    Description = _G_Discord,
+    Callback = function() 
+        setclipboard(_G_Discord) 
+        _G_WindUI:Notify({Title = "Discord", Content = "Link copied to clipboard!", Duration = 3})
+    end 
+})
+
+_Window:SelectTab(_T2)
+
+_G_WindUI:Notify({
+    Title = "BENJO PANEL",
+    Content = "JOIN THE DISCORD SERVER FOR MORE UPDATES AND MORE SCRIPT.",
+    Duration = 5
+})
